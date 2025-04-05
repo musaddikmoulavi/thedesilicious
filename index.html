@@ -47,21 +47,24 @@
 
 
     footer {
-      position: relative;
-      bottom: 0;
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      color: white;
-      text-align: center;
-      padding: 10px 0;
-      z-index: 3;
-    }
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  margin-top: 40px;
+}
+.container {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 80px; /* Prevent content from being hidden by footer */
+}
+
   </style>
 </head>
 
 <body>
   <!-- Background Video -->
-  <video autoplay muted loop playsinline  class="background-video">
+  <video autoplay muted loop class="background-video">
     <source src="src/bgvideo.mp4" type="video/mp4">
     Your browser does not support HTML5 video.
   </video>
@@ -95,7 +98,8 @@
         <a href="menu.html" class="btn btn-primary">View Menu</a>
       </div>
     </div>
-      <div class="card text-dark transparent-card mt-4 mx-auto" style="max-width: 25rem;">
+
+    <div class="card text-dark transparent-card mt-4 mx-auto" style="max-width: 25rem;">
       <div class="card-body">
         <h5 class="card-title">Reserve Your Table</h5>
         <p class="card-text">Planning a visit? Book your table in advance and skip the wait!</p>
