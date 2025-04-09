@@ -98,10 +98,10 @@
     <form onsubmit="submitFeedback(event)" action="https://formspree.io/f/movepvzj"
   method="POST">
       <div class="form-group">
-        <input type="text" id="customerName" class="form-control mb-2" placeholder="Your Name" required>
+        <input type="text" id="customerName" name="name" class="form-control mb-2" placeholder="Your Name" required>
       </div>
       <div class="form-group">
-        <textarea id="customerFeedback" class="form-control" placeholder="Write your feedback here..." required></textarea>
+        <textarea id="customerFeedback" name="message" class="form-control" placeholder="Write your feedback here..." required></textarea>
       </div>
       <button type="submit" class="btn btn-success">Submit</button>
     </form>
@@ -114,31 +114,52 @@
     });
   
     function submitFeedback(event) {
-      event.preventDefault();
-  
-      const name = document.getElementById("customerName").value.trim();
-      const feedback = document.getElementById("customerFeedback").value.trim();
-  
-      if (!name || !feedback) return;
-  
-      const newFeedback = { name, message: feedback };
-  
-      // Get existing feedbacks or initialize empty array
+  event.preventDefault();
+
+  const name = document.getElementById("customerName").value.trim();
+  const feedback = document.getElementById("customerFeedback").value.trim();
+
+  if (!name || !feedback) return;
+
+  const newFeedback = { name, message: feedback };
+
+  // Send feedback to Formspree
+  fetch("https://formspree.io/f/movepvzj", {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      name: name,
+      message: feedback
+    })
+  })
+  .then(response => {
+    if (response.ok) {
+      // Store in localStorage
       let feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
-  
-      // Add new feedback
       feedbacks.unshift(newFeedback);
-  
-      // Save to localStorage
       localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
-  
-      // Update UI
+
+      // Show in UI
       displayFeedbackItem(newFeedback);
-  
-      // Clear form fields
+
+      // Clear form
       document.getElementById("customerName").value = "";
       document.getElementById("customerFeedback").value = "";
+
+      alert("Thanks for your feedback!");
+    } else {
+      alert("Failed to send feedback. Please try again later.");
     }
+  })
+  .catch(error => {
+    console.error("Error submitting to Formspree:", error);
+    alert("Something went wrong!");
+  });
+}
+
   
     function loadFeedback() {
       const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
