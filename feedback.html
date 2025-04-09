@@ -93,46 +93,72 @@
     </div>
   </nav>
 
-<div class="container mt-5">
-  <h2 class="text-center mb-4">We'd Love Your Feedback!</h2>
-  <form action="https://formspree.io/f/movepvzj" method="POST">
-    <div class="form-group">
-      <input type="text" name="name" class="form-control mb-2" placeholder="Your Name" required>
-    </div>
-    <div class="form-group">
-      <textarea name="message" class="form-control" placeholder="Write your feedback here..." required></textarea>
-    </div>
-    <button type="submit" class="btn btn-success">Submit</button>
-  </form>
-</div>
-
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">We'd Love Your Feedback!</h2>
+    <form onsubmit="submitFeedback(event)">
+      <div class="form-group">
+        <input type="text" id="customerName" class="form-control mb-2" placeholder="Your Name" required>
+      </div>
+      <div class="form-group">
+        <textarea id="customerFeedback" class="form-control" placeholder="Write your feedback here..." required></textarea>
+      </div>
+      <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+    <ul id="reviews" class="mt-4 list-unstyled"></ul>
+  </div>
 
   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      loadFeedback(); // Load existing feedback on page load
+    });
+  
     function submitFeedback(event) {
-      event.preventDefault(); // Prevent page reload
-
-      // Get user input values
-      const name = document.getElementById("customerName").value;
-      const feedback = document.getElementById("customerFeedback").value;
+      event.preventDefault();
+  
+      const name = document.getElementById("customerName").value.trim();
+      const feedback = document.getElementById("customerFeedback").value.trim();
+  
+      if (!name || !feedback) return;
+  
+      const newFeedback = { name, message: feedback };
+  
+      // Get existing feedbacks or initialize empty array
+      let feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+  
+      // Add new feedback
+      feedbacks.unshift(newFeedback);
+  
+      // Save to localStorage
+      localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
+  
+      // Update UI
+      displayFeedbackItem(newFeedback);
+  
+      // Clear form fields
+      document.getElementById("customerName").value = "";
+      document.getElementById("customerFeedback").value = "";
+    }
+  
+    function loadFeedback() {
+      const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+      feedbacks.forEach(displayFeedbackItem);
+    }
+  
+    function displayFeedbackItem(feedback) {
       const reviewsList = document.getElementById("reviews");
-
-      // Create a new feedback item
+  
       const listItem = document.createElement("li");
       listItem.classList.add("feedback-item");
+  
       listItem.innerHTML = `
         <img src="https://via.placeholder.com/40" alt="User">
         <div class="feedback-text">
-          <span class="feedback-name">${name}</span><br>
-          <span class="feedback-message">${feedback}</span>
+          <span class="feedback-name">${feedback.name}</span><br>
+          <span class="feedback-message">${feedback.message}</span>
         </div>
       `;
-
-      // Append feedback to the list
-      reviewsList.prepend(listItem); // Adds to the top
-
-      // Clear the form fields
-      document.getElementById("customerName").value = "";
-      document.getElementById("customerFeedback").value = "";
+  
+      reviewsList.prepend(listItem);
     }
   </script>
 
